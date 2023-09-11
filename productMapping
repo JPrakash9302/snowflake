@@ -1,0 +1,45 @@
+CREATE OR REPLACE STORAGE INTEGRATION AZURE_STORAGE
+TYPE = EXTERNAL_STAGE
+STORAGE_PROVIDER = AZURE
+ENABLED = TRUE
+AZURE_TENANT_ID = 'd98e16c4-4ec4-4b35-ad39-b3d3da3e4972'
+STORAGE_ALLOWED_LOCATIONS = ('azure://jayaprakash.blob.core.windows.net/productmapping/productMapping.csv'
+);
+
+describe STORAGE INTEGRATION AZURE_STORAGE;
+
+ 
+USE ProductMapping;
+--CREATING THE EXTERNAL STAGE FOR LOADING THA DATA INTO THE SNOWFLAKE TABLE
+create or replace stage azure_stage
+STORAGE_INTEGRATION = AZURE_STORAGE1
+url = 'azure://jayaprakash.blob.core.windows.net/productmapping/productMapping.csv';
+
+list @AZURE_STAGE;
+
+CREATE OR REPLACE TABLE product_details_staging (
+    ProductID VARCHAR,
+	dt VARCHAR,
+	CustomerID VARCHAR,
+	units_sold VARCHAR,
+	Units VARCHAR,
+	Product VARCHAR, 
+	Category VARCHAR,
+	Segment VARCHAR,
+	ManufacturerID VARCHAR,
+	Manufacturer VARCHAR,
+	UnitCost VARCHAR,
+	UnitPrice VARCHAR,
+	ZipCode VARCHAR,
+	EmailName VARCHAR,
+	City VARCHAR,
+	Region VARCHAR,
+	District VARCHAR
+
+);
+
+
+COPY INTO product_details_staging FROM @AZURE_STAGE;
+
+
+SELECT * FROM product_details_staging;
